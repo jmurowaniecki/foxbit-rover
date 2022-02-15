@@ -13,6 +13,7 @@
     "nodemon": "^2.0.15"
   },
   "scripts": {
+    "message": "node ./src/client.js",
     "start": "node ./src/rover.js",
     "test": "yarn run mocha"
   },

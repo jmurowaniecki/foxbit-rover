@@ -10,6 +10,7 @@ import Terrain  from '../lib/Terrain.cjs';
 import Rover    from '../lib/Rover.cjs';
 import CARDINAL from '../lib/Cardinal.cjs';
 import Console  from '../lib/Console.cjs';
+import net      from 'net';
 
 /**
  * Starts a nerdy Console helper…
@@ -40,6 +41,13 @@ const APP = new Console(
     }
 );
 
+var server = net.createServer(function(socket) {
+    socket.write('Echo server\r\n');
+    socket.pipe(socket);
+    socket.on('error', erro => APP.currier.push(erro));
+    socket.on('data',  data => APP.socket .push(data));
+});
+server.listen(4815, '127.0.0.1');
 
 /**
  * Creates a new vehicle, dropping on x,y with North (default) orientation…
@@ -49,30 +57,37 @@ const vehicle = new Rover({x: 1, y: 0}, 80, 1, Terrain, APP);
 /**
  * Create a Human Interface for the Application…
 */
-setInterval(() => {
+function main() {
     APP.window(1, 1, APP.max.row, APP.max.col, APP.mission, APP.description);
 
-    APP.box(3, 3, 13, 21).at(3, 5, ' Rover Stats ');
+    APP.box(3, 3, 13, 24).at(3, 5, ' Rover Stats ');
     APP.at(5, 5, 'Coordinates');
     APP.at(6, 5, '').RobCo.inverse(`X: ${vehicle.position.x} Y: ${vehicle.position.y}`);
     APP.at(8, 5, 'Orientation');
     APP.at(9, 5, `${CARDINAL[vehicle.orientation+10]} `)
         .RobCo.inverse(`${CARDINAL[CARDINAL[vehicle.orientation]]}`);
     APP.at(11, 5, 'Energy/Fuel');
-    APP.at(12, 5, `🗲 ${vehicle.fuel} `).RobCo('▓▓▓▓▓▒▒▒▒▒▒░░');
+    APP.at(12, 5, `🗲 ${vehicle.fuel} `).RobCo('▓▓▓▓▓▒▒▒▒▒▒░░░░');
 
-    APP.box(15, 3, 24, 21).at(15, 5, ' Details ');
-    APP.at(17, 5, '░ smooth terrain');
-    APP.at(19, 5, '▒ rough terrain');
-    APP.at(21, 5, '▓ hard crossing');
-    APP.at(23, 5, `${vehicle.icon} rover icon`);
+    APP.box(14, 3, 23, 24).at(14, 5, ' Details ');
+    APP.at(16, 5, '░ smooth terrain');
+    APP.at(18, 5, '▒ rough terrain');
+    APP.at(20, 5, '▓ hard crossing');
+    APP.at(22, 5, `${vehicle.icon} rover icon`);
+
+    APP.box(24, 3, APP.max.row - 2, 24).at(24, 5, ' Server ');
+    APP.at(26, 5).RobCo.inverse('tcp://127.0.0.1:4815');
+    // APP.socket.slice()
+    APP.socket.slice(-4).forEach((tx, i) => {
+        APP.at(27 + i, 4, `${i == 0 ? '>' : ''} ${tx}`.substring(0, 21));
+    });
 
     let tv = Terrain.view,
         furthestX = tv.x + APP.max.row - 2,
         furthestY = tv.y + APP.max.col - 25;
 
-    APP.box(3, 24, APP.max.row - 2, APP.max.col - 25)
-        .at(3, 28, [
+    APP.box(3, 27, APP.max.row - 2, APP.max.col - 27)
+        .at(3, 29, [
             ` Terrain // viewport from {${Terrain.view.x},${Terrain.view.y}} to `,
             `{${furthestX},${furthestY}}`,
         ].join(''));
@@ -82,14 +97,14 @@ setInterval(() => {
     // Draw grounds…
     Terrain.terrain.slice(Terrain.view.x, Terrain.view.x + APP.max.row - 6)
         .forEach((ground, index) => {
-            APP.at(4 + index, 25, ground
-                .slice(Terrain.view.y, Terrain.view.y + APP.max.col - 27)
+            APP.at(4 + index, 28, ground
+                .slice(Terrain.view.y, Terrain.view.y + APP.max.col - 29)
                 .join(''));
         });
 
     // Fix rover positioning and draw the landing / dropsite in blinky bright green…
     let vehicle_pos_x =  4 + vehicle.position.x,
-        vehicle_pos_y = 25 + vehicle.position.y;
+        vehicle_pos_y = 28 + vehicle.position.y;
 
     APP.blink(vehicle_pos_x, vehicle_pos_y, vehicle.icon);
 
@@ -99,8 +114,8 @@ setInterval(() => {
         APP.at(APP.max.row - (APP.max.col > 80 ? 1 : 0), APP.max.col - 15, ` ${APP.lastKey} pressed… `);
     }
 
-    APP.at(APP.max.row, 5, ` ${APP.max.row} x ${APP.max.col}`);
+    // APP.at(APP.max.row, 5, ` ${APP.max.row} x ${APP.max.col}`);
+    // APP.at(APP.max.row, 15, ` ${vehicle.position.x}x${vehicle.position.y}`);
+}
 
-    APP.at(APP.max.row, 15, ` ${vehicle.position.x}x${vehicle.position.y}`);
-
-}, 666);
+setInterval(main, 666);

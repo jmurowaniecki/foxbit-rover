@@ -14,15 +14,17 @@ help: ## Show this help.
 install: ## Install Node packages using Yarn or NPM…
 	$(EXECUTOR) install
 
-clear: ## Remove node packages, lock files and temporary data…
-	rm -Rf node_modules package-lock.json yarn.lock
-
-start: node_modules ## Run application.
+start: node_modules ## Run application - start rover.
 	$(EXECUTOR) start
+
+message: node_modules ## Run messenger - command rover.
+	$(EXECUTOR) run message
 
 lint: node_modules ## Run ESLint.
 	$(EXECUTOR) run eslint ./{src,lib}/*
 
-.PHONY: test
-test: node_modules ## Run ESLint.
-	@$(EXECUTOR) test
+tests: node_modules ## Run ESLint.
+	$(EXECUTOR) test
+
+clear: ## Remove node packages, lock files and temporary data…
+	rm -Rf node_modules package-lock.json yarn.lock
