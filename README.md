@@ -26,8 +26,24 @@ Our rover is already positioned, however to obtain the telemetry we need to star
 
 
 
-# Manual control mode
+## Manual control mode
 
 The manual control mode allows you to operate the rover through the control and telemetry screen in a simple way, just by pressing the `R` and `L` keys to rotate the device respectively to the Right and Left and `M` to move it forward.
 
 Press `ESC` or `CTRL+C` to exit.
+
+
+
+## Remote control mode
+
+
+The remote control mode can be activated by the `make message` command and has been designed to follow the specifications in the standards ordered by the documentation - as shown in the example below:
+
+```
+Test Input
+5 5
+1 2 N
+LMLMLMLMM
+3 3 E
+MMRMMRMRRM
+```
