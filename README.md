@@ -47,3 +47,7 @@ LMLMLMLMM
 3 3 E
 MMRMMRMRRM
 ```
+
+# Countdown to demo in 10… 9…
+
+[![asciicast](https://asciinema.org/a/AQ6VXiT607Pcc36XKI0xe32fD.svg)](https://asciinema.org/a/AQ6VXiT607Pcc36XKI0xe32fD)
