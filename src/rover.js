@@ -107,7 +107,6 @@ function main() {
         vehicle_pos_y = 28 + vehicle.position.y;
 
     APP.blink(vehicle_pos_x, vehicle_pos_y, vehicle.icon);
-
     APP.blink(vehicle_pos_x+1, vehicle_pos_y, `${vehicle_pos_x},${vehicle_pos_y}`);
 
     if (APP.lastKey) {
